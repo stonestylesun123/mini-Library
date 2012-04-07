@@ -1,0 +1,66 @@
+#! /usr/bin/python
+# coding: utf-8
+
+import wx
+from library import library
+
+class LoginUI(wx.Frame):
+    def __init__(self, parent, id, title):
+        wx.Frame.__init__(self, parent, id, title)
+
+        self.InitUI()
+        self.SetSize((200,157))
+        self.SetMaxSize((200,157))
+        self.SetMinSize((200,157))
+        self.Centre()
+        self.Show(True)
+
+    def InitUI(self):
+        panel = wx.Panel(self)
+
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        fgs = wx.FlexGridSizer(4,2,5,10)
+
+        self.st0 = wx.StaticText(panel, label='Identity')
+        self.cb = wx.ComboBox(panel, -1, size=(90,26),choices=['student','manager'])
+        self.st1 = wx.StaticText(panel,label='ID')
+        self.st2 = wx.StaticText(panel,label='Password')
+        self.tc1 = wx.TextCtrl(panel, -1, '')
+        self.tc2 = wx.TextCtrl(panel, -1, '',style = wx.TE_PASSWORD)
+        self.bt1 = wx.Button(panel,-1,label='login')
+        self.bt2 = wx.Button(panel,-1,label='quit')
+
+        fgs.Add(self.st0, flag=wx.TOP, border=5)
+        fgs.Add(self.cb)
+        fgs.Add(self.st1,flag=wx.TOP,border=5)
+        fgs.Add(self.tc1)
+        fgs.Add(self.st2,flag=wx.TOP,border=5)
+        fgs.AddMany([(self.tc2),(self.bt1),(self.bt2)])
+        hbox.Add(fgs, proportion=0, flag=wx.EXPAND|wx.ALL, border=10)
+
+        self.Bind(wx.EVT_BUTTON, self.login, self.bt1)
+        self.Bind(wx.EVT_BUTTON, self.quit, self.bt2)
+
+        panel.SetSizer(hbox)
+
+    def login(self,e):
+        identity = self.cb.GetValue()
+        userid = self.tc1.GetValue()
+        passd = self.tc2.GetValue()
+        result = library.login_in(identity, userid, passd)
+        if result:
+            pass
+        else:
+            wx.MessageBox('Invalid ID or Wrong Password!', 'Error', wx.OK | wx.ICON_ERROR)
+        
+
+    def quit(self,e):
+        self.Close()
+
+def main():        
+    app = wx.App()
+    LoginUI(None, -1, 'Library')
+    app.MainLoop()
+
+if __name__ == '__main__':
+    main()
