@@ -16,6 +16,13 @@ class LoginUI(wx.Frame):
         self.Show(True)
 
     def InitUI(self):
+	menubar = wx.MenuBar()
+        helpmenu = wx.Menu()
+        helpmenu.Append(100, '&About')
+        self.Bind(wx.EVT_MENU, self.OnAboutBox, id=100)
+        menubar.Append(helpmenu, '&Help')
+        self.SetMenuBar(menubar)
+
         panel = wx.Panel(self)
 
         hbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -42,6 +49,24 @@ class LoginUI(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.quit, self.bt2)
 
         panel.SetSizer(hbox)
+
+    def OnAboutBox(self, e):
+        description = """a simple library manager system"""
+        info = wx.AboutDialogInfo()
+
+        info.SetIcon(wx.Icon('icon.png', wx.BITMAP_TYPE_PNG))
+        info.SetName('Library System')
+        info.SetVersion('1.0')
+        info.SetDescription(description)
+        info.SetCopyright('(c) 2012 Xiaohui Huang')
+        #info.SetWebsite('')
+        #info.SetLicence('')
+        info.AddDeveloper('Xiaohui Huang')
+        info.AddDocWriter('Xiaohui Huang')
+        #info.AddArtist('')
+        #info.AddTranslator('')
+
+        wx.AboutBox(info)
 
     def login(self,e):
         identity = self.cb.GetValue()
