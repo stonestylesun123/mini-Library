@@ -150,6 +150,16 @@ class lib_manager:
         #print command
         exec(command)
 
+    def update_Reader(self, Reader_info):
+        Reader_info = self.change_str_to_mysql(Reader_info)
+        Reader_id = Reader_info[0]
+        Reader_info.remove(Reader_id)
+        Reader_info.append(Reader_id)
+        Reader_info = tuple(Reader_info)
+        command = u"""self.cur.execute("UPDATE Reader SET Reader_name='%s', Reader_gender='%s', Reader_email='%s', lended_book_count='%s', get_right_to_borrow='%s', Reader_remarks='%s' WHERE Reader_id='%s'")""" % Reader_info
+        print command
+        exec(command)
+
     def borrow_book(self, Reader_id, Book_id):
         """
     borrow processing
@@ -329,8 +339,13 @@ the main function for testing
 
     #print "-----------------------"
     #print "test update_Book()"
-    Book_info = ['1', 'stonestyle', 'stone', 'stone inc', 'IT', '10', '0', 'no remark!']
-    mg.update_Book(Book_info)
+    #Book_info = ['1', 'stonestyle', 'stone', 'stone inc', 'IT', '10', '0', 'no remark!']
+    #mg.update_Book(Book_info)
+
+    #print "-----------------------"
+    #print "test update_Book()"
+    Reader_info = ['20090001', 'stone', 'M', 'stone@qq.com', '0', '1', 'no remark!']
+    mg.update_Reader(Reader_info)
 
 if __name__ == "__main__":
     main()

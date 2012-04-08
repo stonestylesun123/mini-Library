@@ -123,8 +123,6 @@ class submanagerUI(wx.Panel):
                     wx.MessageBox('Does not exist', 'Error', wx.OK | wx.ICON_ERROR)
                 else:
                     print result
-                    firstline = ['id','name','author','publisher','type','amount','lended_amount','remarks']
-                    resultstr = ""
                     for i in range(len(result)):
                         command = """self.u1_tc%d.SetValue("%s")""" % ((i + 3), result[i])
                         exec(command)
@@ -162,16 +160,20 @@ class submanagerUI(wx.Panel):
     def reader_look_up_UI(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        sizer = wx.GridBagSizer(1,4)
+        sizer = wx.GridBagSizer(1,6)
         u2_st0 = wx.StaticText(self, -1, label="读者查询")
         u2_st0.SetForegroundColour('#3014D4')
         u2_st1 = wx.StaticText(self, -1, label="请输入读者ID")
         self.u2_tc1 = wx.TextCtrl(self, -1, size=(120, 26))
-        u2_bt1 = wx.Button(self, -1, label='查询')
+        u2_bt1 = wx.Button(self, 301, label='查询')
+        u2_new_bt1 = wx.Button(self, 302, label='修改')
+        u2_new_bt2 = wx.Button(self, 303, label='提交')
         sizer.Add(u2_st0, pos=(0,0), flag=wx.ALL, border=18)
         sizer.Add(u2_st1, pos=(0,1), flag=wx.ALL, border=18)
         sizer.Add(self.u2_tc1, pos=(0,2), flag=wx.ALL, border=15)
         sizer.Add(u2_bt1, pos=(0,3), flag=wx.ALL, border=12)
+        sizer.Add(u2_new_bt1, pos=(0,4), flag=wx.ALL, border=12)
+        sizer.Add(u2_new_bt2, pos=(0,5), flag=wx.ALL, border=12)
         vbox.Add(sizer)
         line = wx.StaticLine(self)
         vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
@@ -215,7 +217,12 @@ class submanagerUI(wx.Panel):
         sizer2.Add(u2_st9, pos=(4,0), flag=wx.ALL, border=5)
         sizer2.Add(self.u2_tc9, pos=(4,1), flag=wx.ALL, border=5)
         vbox.Add(sizer2, proportion=0, flag=wx.LEFT|wx.EXPAND, border=15)
+        self.u1_lookup = False
+        self.u1_changed = False
+        self.u1_handon = False
         self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_bt1)
+        self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_new_bt1)
+        self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_new_bt1)
 
         return vbox
 
