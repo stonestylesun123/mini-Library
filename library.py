@@ -30,7 +30,7 @@ class library:
                 temp_pass = (id_pass,)
                 #print "temp_pass:",temp_pass
                 if temp_pass == passwd:
-                    return True
+                    return con
                 else:
                     return False
             else:

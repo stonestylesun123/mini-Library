@@ -30,11 +30,11 @@ class LoginUI(wx.Frame):
         fgs = wx.FlexGridSizer(4,2,5,10)
 
         self.st0 = wx.StaticText(panel, label='Identity')
-        self.cb = wx.ComboBox(panel, -1, size=(90,26),choices=['student','manager'])
+        self.cb = wx.ComboBox(panel, -1, size=(90,26), choices=['student','manager'], value='manager')
         self.st1 = wx.StaticText(panel,label='ID')
         self.st2 = wx.StaticText(panel,label='Password')
-        self.tc1 = wx.TextCtrl(panel, -1, '')
-        self.tc2 = wx.TextCtrl(panel, -1, '',style = wx.TE_PASSWORD)
+        self.tc1 = wx.TextCtrl(panel, -1, '1001')
+        self.tc2 = wx.TextCtrl(panel, -1, 'managerone',style = wx.TE_PASSWORD)
         self.bt1 = wx.Button(panel,-1,label='login')
         self.bt2 = wx.Button(panel,-1,label='quit')
 
@@ -75,7 +75,7 @@ class LoginUI(wx.Frame):
         passd = self.tc2.GetValue()
         result = library.login_in(identity, userid, passd)
         if result:
-            self.managerUI = managerUI(None, -1)
+            self.managerUI = managerUI(connection=result, parent=None, id=-1)
 	    self.Show(False)
 	    self.managerUI.Show(True)
         else:

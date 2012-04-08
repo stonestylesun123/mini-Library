@@ -5,9 +5,10 @@ import wx
 from submanagerUI import submanagerUI
 
 class managerUI(wx.Frame):
-    def __init__(self, parent, id, title='Library'):
+    def __init__(self, connection, parent=None, id=-1, title='Library'):
         wx.Frame.__init__(self, parent, id, title)
 
+        self.connection=connection
         self.InitUI()
         self.SetSize((850,650))
         self.Centre()
@@ -25,12 +26,12 @@ class managerUI(wx.Frame):
         self.panel = wx.Panel(self)
         self.upPanel = wx.Panel(self.panel, -1)
         self.downPanel = wx.Panel(self.panel, -1)
-        self.subUI1 = submanagerUI(self.downPanel, -1, 1)
-        self.subUI2 = submanagerUI(self.downPanel, -1, 2)
-        self.subUI3 = submanagerUI(self.downPanel, -1, 3)
-        self.subUI4 = submanagerUI(self.downPanel, -1, 4)
-        self.subUI5 = submanagerUI(self.downPanel, -1, 5)
-        self.subUI6 = submanagerUI(self.downPanel, -1, 6)
+        self.subUI1 = submanagerUI(self.downPanel, -1, 1, self.connection)
+        self.subUI2 = submanagerUI(self.downPanel, -1, 2, self.connection)
+        self.subUI3 = submanagerUI(self.downPanel, -1, 3, self.connection)
+        self.subUI4 = submanagerUI(self.downPanel, -1, 4, self.connection)
+        self.subUI5 = submanagerUI(self.downPanel, -1, 5, self.connection)
+        self.subUI6 = submanagerUI(self.downPanel, -1, 6, self.connection)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         sizer = wx.GridBagSizer(2, 7)
@@ -63,6 +64,7 @@ class managerUI(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt5)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt6)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt7)
+        #self.Bind(wx.EVT_EXIT, self.quit)
 
     def ButtonEvent(self, e):
         panelid = e.GetId()

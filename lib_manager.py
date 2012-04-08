@@ -55,6 +55,8 @@ class lib_manager:
         #print command
         exec(command)
         data = self.cur.fetchone()
+        if data == None:
+            return False
         data = list(data)
         data = self.change_str_from_mysql(data)
         return data
@@ -67,10 +69,12 @@ class lib_manager:
     @return data:       information about a book
     @rtype data:        list
         """
-        command = u"""self.cur.execute("SELECT * FROM Book WHERE Book_name = %s")""" % Book_name
+        command = u"""self.cur.execute("SELECT * FROM Book WHERE Book_name = '%s'")""" % Book_name
         #print command
         exec(command)
         data = self.cur.fetchone()
+        if data == None:
+            return False
         data = list(data)
         data = self.change_str_from_mysql(data)
         return data
@@ -109,6 +113,8 @@ class lib_manager:
         #print command
         exec(command)
         data = self.cur.fetchone()
+        if data == None:
+            return False
         data = list(data)
         data = self.change_str_from_mysql(data)
         return data
@@ -257,8 +263,8 @@ def main():
     """
 the main function for testing
     """
-    #con = mdb.connect('localhost', 'library', '123456', 'librarydb', charset="utf8")
-    #mg = lib_manager(con)
+    con = mdb.connect('localhost', 'library', '123456', 'librarydb', charset="utf8")
+    mg = lib_manager(con)
     #print "----------------------------"
     #print "test add_Reader()"
     #f = open('Reader_v1.0','r')
@@ -291,11 +297,11 @@ the main function for testing
     #    print temp
     #    mg.add_Book(temp)
 
-    #print "--------------------------"
-    #print "test lookup_Book_by_ID()"
-    #bid = '5555'
-    #msg = mg.lookup_Book_by_ID(bid)
-    #print msg
+    print "--------------------------"
+    print "test lookup_Book_by_ID()"
+    bid = '5555'
+    msg = mg.lookup_Book_by_ID(bid)
+    print msg
     
     #print "-------------------------"
     #print "test del_Book()"
