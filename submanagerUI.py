@@ -217,33 +217,75 @@ class submanagerUI(wx.Panel):
         sizer2.Add(u2_st9, pos=(4,0), flag=wx.ALL, border=5)
         sizer2.Add(self.u2_tc9, pos=(4,1), flag=wx.ALL, border=5)
         vbox.Add(sizer2, proportion=0, flag=wx.LEFT|wx.EXPAND, border=15)
-        self.u1_lookup = False
-        self.u1_changed = False
-        self.u1_handon = False
+        self.u2_lookup = False
+        self.u2_changed = False
+        self.u2_handon = False
         self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_bt1)
         self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_new_bt1)
-        self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_new_bt1)
+        self.Bind(wx.EVT_BUTTON, self.readerlookup, u2_new_bt2)
 
         return vbox
 
     def readerlookup(self, e):
-        string = self.u2_tc1.GetValue()
-        if string == "":
-            wx.MessageBox('Invalid input!', 'Error', wx.OK | wx.ICON_ERROR)
-        else:
-            result = self.lib_manager.lookup_Reader(string)
-            if result == None or result == False:
-                wx.MessageBox('Does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+        if e.GetId() == 301:
+            if self.u2_handon:
+                dial = wx.MessageDialog(None, 'Are you sure to quit without saving changes?', 'Question', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+                ret = dial.ShowModal()
+                if not ret == wx.ID_YES:
+                    return
+                else:
+                    for i in range(1, 7):
+                        command = "self.u2_tc%d.Disable()" % (i + 3)
+                        exec(command)
+            string = self.u2_tc1.GetValue()
+            if string == "":
+                wx.MessageBox('Invalid input!', 'Error', wx.OK | wx.ICON_ERROR)
             else:
-                print result
-                resultstr = ""
-                for i in range(len(result)):
-                    if not i == 5:
-                        command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), result[i])
-                        exec(command)
-                    else:
-                        command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), (result[i] and "YES" or "NO"))
-                        exec(command)
+                result = self.lib_manager.lookup_Reader(string)
+                if result == None or result == False:
+                    wx.MessageBox('Does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+                else:
+                    print result
+                    resultstr = ""
+                    for i in range(len(result)):
+                        if not i == 5:
+                            command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), result[i])
+                            exec(command)
+                        else:
+                            command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), (result[i] and "YES" or "NO"))
+                            exec(command)
+                            self.u2_lookup = True
+                            self.u2_changed = False
+                            self.u2_handon = False
+        if e.GetId() == 302:
+            if not self.u2_lookup:
+                wx.MessageBox('请先查询再修改', 'Error', wx.OK | wx.ICON_ERROR)
+            else:
+                for i in range(1,7):
+                    command = "self.u2_tc%d.Enable()" % (i + 3)
+                    exec(command)
+                self.u2_changed = True
+                self.u2_handon = True
+        if e.GetId() == 303:
+            if not self.u2_changed:
+                wx.MessageBox('请先修改再提交', 'Error', wx.OK | wx.ICON_ERROR)
+            elif not self.u2_lookup:
+                wx.MessageBox('请先查询', 'Error', wx.OK | wx.ICON_ERROR)
+            else:
+                temp = []
+                for i in range(7):
+                    command = "tmp = self.u2_tc%d.GetValue()" % (i + 3)
+                    exec(command)
+                    if i == 5:
+                        tmp = (tmp == 'YES' and 1 or 0)
+                    temp.append(tmp)
+
+                self.lib_manager.update_Reader(temp)
+                self.u2_handon = False
+
+                for i in range(1,7):
+                    command = "self.u2_tc%d.Disable()" % (i + 3)
+                    exec(command)
 
     def book_manager_UI(self):
         pass
