@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import wx
+from submanagerUI import submanagerUI
 
 class managerUI(wx.Frame):
     def __init__(self, parent, id, title):
@@ -21,20 +22,25 @@ class managerUI(wx.Frame):
         menubar.Append(helpmenu, '&Help')
         self.SetMenuBar(menubar)
 
-        panel = wx.Panel(self)
-        upPanel = wx.Panel(panel, -1)
-        downPanel = wx.Panel(panel, -1)
-
+        self.panel = wx.Panel(self)
+        self.upPanel = wx.Panel(self.panel, -1)
+        self.downPanel = wx.Panel(self.panel, -1)
+        self.subUI1 = submanagerUI(self.downPanel, -1, 1)
+        self.subUI2 = submanagerUI(self.downPanel, -1, 2)
+        self.subUI3 = submanagerUI(self.downPanel, -1, 3)
+        self.subUI4 = submanagerUI(self.downPanel, -1, 4)
+        self.subUI5 = submanagerUI(self.downPanel, -1, 5)
+        self.subUI6 = submanagerUI(self.downPanel, -1, 6)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         sizer = wx.GridBagSizer(2, 7)
-        bt1 = wx.Button(upPanel, -1, label='图书查询')
-        bt2 = wx.Button(upPanel, -1, label='读者查询')
-        bt3 = wx.Button(upPanel, -1, label='图书管理')
-        bt4 = wx.Button(upPanel, -1, label='读者管理')
-        bt5 = wx.Button(upPanel, -1, label='借书处理')
-        bt6 = wx.Button(upPanel, -1, label='还书处理')
-        bt7 = wx.Button(upPanel, -1, label='退出系统')
+        bt1 = wx.Button(self.upPanel, 1, label='图书查询')
+        bt2 = wx.Button(self.upPanel, 2, label='读者查询')
+        bt3 = wx.Button(self.upPanel, 3, label='图书管理')
+        bt4 = wx.Button(self.upPanel, 4, label='读者管理')
+        bt5 = wx.Button(self.upPanel, 5, label='借书处理')
+        bt6 = wx.Button(self.upPanel, 6, label='还书处理')
+        bt7 = wx.Button(self.upPanel, 7, label='退出系统')
         sizer.Add(bt1, pos=(0, 0), flag=wx.ALL, border=15)
         sizer.Add(bt2, pos=(0, 1), flag=wx.ALL, border=15)
         sizer.Add(bt3, pos=(0, 2), flag=wx.ALL, border=15)
@@ -42,14 +48,31 @@ class managerUI(wx.Frame):
         sizer.Add(bt5, pos=(0, 4), flag=wx.ALL, border=15)
         sizer.Add(bt6, pos=(0, 5), flag=wx.ALL, border=15)
         sizer.Add(bt7, pos=(0, 6), flag=wx.ALL, border=15)
-        line = wx.StaticLine(panel)
+        line = wx.StaticLine(self.upPanel)
         sizer.Add(line, pos=(1, 0), span=(1, 7), flag=wx.EXPAND|wx.BOTTOM, border=10)
-        upPanel.SetSizer(sizer)
+        self.upPanel.SetSizer(sizer)
 
-        vbox.Add(upPanel, 0, wx.EXPAND | wx.RIGHT, 5)
-        vbox.Add(downPanel, 1, wx.EXPAND)
-        vbox.Add((3, -1))
-        panel.SetSizer(vbox)
+        vbox.Add(self.upPanel, 0, wx.EXPAND | wx.RIGHT, 5)
+        vbox.Add(self.downPanel, 1, wx.EXPAND)
+        self.panel.SetSizer(vbox)
+
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt1)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt2)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt3)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt4)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt5)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt6)
+        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt7)
+
+    def ButtonEvent(self, e):
+        panelid = e.GetId()
+        for i in range(1,7):
+            if not i == panelid:
+                string = "self.subUI%d.Hide()" % i
+                exec(string)
+            else:
+                string = "self.subUI%d.Show(True)" % i
+                exec(string)
 
     def OnAboutBox(self, e):
         description = """a simple library manager system"""
