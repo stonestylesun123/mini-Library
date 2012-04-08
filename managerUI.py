@@ -5,7 +5,7 @@ import wx
 from submanagerUI import submanagerUI
 
 class managerUI(wx.Frame):
-    def __init__(self, parent, id, title):
+    def __init__(self, parent, id, title='Library'):
         wx.Frame.__init__(self, parent, id, title)
 
         self.InitUI()

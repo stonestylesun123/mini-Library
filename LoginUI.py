@@ -3,6 +3,7 @@
 
 import wx
 from library import library
+from managerUI import managerUI
 
 class LoginUI(wx.Frame):
     def __init__(self, parent, id, title):
@@ -74,7 +75,9 @@ class LoginUI(wx.Frame):
         passd = self.tc2.GetValue()
         result = library.login_in(identity, userid, passd)
         if result:
-            pass
+            self.managerUI = managerUI(None, -1)
+	    self.Show(False)
+	    self.managerUI.Show(True)
         else:
             wx.MessageBox('Invalid ID or Wrong Password!', 'Error', wx.OK | wx.ICON_ERROR)
         

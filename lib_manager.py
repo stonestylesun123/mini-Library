@@ -14,23 +14,23 @@ reload(sys);
 sys.setdefaultencoding('utf-8')
 
 class lib_manager:
-"""
-clas lib_manager
-contains function:
-    1  lookup book
-        a. look up a book by it's ID
-        b. look up a book by it's name
-    2  add books
-    3  delete books
-    4  lookup reader
-    5  add reader
-    6  delete reader
-    7  borrow processing
-    8  renew processing
-    9  return processing
-    10 borrow timeout processing
-    11 recover borrow privilege
-"""
+#"""
+#clas lib_manager
+#contains function:
+#    1  lookup book
+#        a. look up a book by it's ID
+#        b. look up a book by it's name
+#    2  add books
+#    3  delete books
+#    4  lookup reader
+#    5  add reader
+#    6  delete reader
+#    7  borrow processing
+#    8  renew processing
+#    9  return processing
+#    10 borrow timeout processing
+#    11 recover borrow privilege
+#"""
 
     def __init__(self, connection):
         """
