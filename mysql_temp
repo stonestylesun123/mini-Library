@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Book(Book_id INT NOT NULL PRIMARY KEY,Book_name VARCHAR(30),Book_author VARCHAR(30),Book_publisher VARCHAR(30),Book_type VARCHAR(30),Book_amount INT NOT NULL,lended_amount INT NOT NULL DEFAULT 0,Book_remarks VARCHAR(30) DEFAULT 'no remark!');
+
+CREATE TABLE IF NOT EXISTS Reader(Reader_id INT NOT NULL PRIMARY KEY,Reader_name VARCHAR(30) NOT NULL,Reader_gender VARCHAR(1) NOT NULL,Reader_email VARCHAR(30),lended_book_count INT NOT NULL DEFAULT 0,get_right_to_borrow Boolean DEFAULT true,Reader_remarks VARCHAR(30) DEFAULT 'no remark!');
+INSERT INTO Reader VALUES(20090999, '蔡怜', 'W', 'TgP75rQ9R@qq.com', 0)
+
+CREATE TABLE IF NOT EXISTS Record(Record_id VARCHAR(24) NOT NULL PRIMARY KEY,R_id INT NOT NULL,B_id INT NOT NULL,startdate DATE NOT NULL,enddate DATE NOT NULL,is_renewed Boolean DEFAULT false,CONSTRAINT R_R FOREIGN KEY (R_id) REFERENCES Reader(Reader_id),CONSTRAINT R_B FOREIGN KEY (B_id) REFERENCES Reader(Book_id));

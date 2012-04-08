@@ -101,6 +101,15 @@ class lib_manager:
         #print command
         exec(command)
 
+    def update_Book(self, Book_info):
+        Book_info = self.change_str_to_mysql(Book_info)
+        Book_id = Book_info[0]
+        Book_info.remove(Book_id)
+        Book_info.append(Book_id)
+        Book_info = tuple(Book_info)
+        command = u"""self.cur.execute("UPDATE Book SET Book_name='%s', Book_author='%s', Book_publisher='%s', Book_type='%s', Book_amount='%s', lended_amount='%s', Book_remarks='%s' WHERE Book_id='%s' ")""" % Book_info
+        exec(command)
+
     def lookup_Reader(self, Reader_id):
         """
     look up a reader by his ID
@@ -127,8 +136,8 @@ class lib_manager:
         """
         Reader_info = self.change_str_to_mysql(Reader_info)
         Reader_info = tuple(Reader_info)
-        command = u"""self.cur.execute('INSERT INTO Reader VALUES("%s", "%s", "%s", "%s", "%s")')""" % Reader_info
-        #print command
+        command = u"""self.cur.execute('INSERT INTO Reader VALUES("%s", "%s", "%s", "%s", "%s", "%s", "%s")')""" % Reader_info
+        print command
         exec(command)
         
     def del_Reader(self, Reader_id):
@@ -154,13 +163,14 @@ class lib_manager:
         exec(command)
         bookinfo = self.cur.fetchall()
         if bookinfo[0][0] - bookinfo[0][1] > 0:
-            command = u"""self.cur.execute("SELECT lended_book_count FROM Reader WHERE Reader_id = %s")""" % Reader_id
+            command = u"""self.cur.execute("SELECT get_right_to_borrow,lended_book_count FROM Reader WHERE Reader_id = %s")""" % Reader_id
             exec(command)
             readerinfo = self.cur.fetchone()
-            if readerinfo[0] == 10:
-                print "You hava already borrower 10 books yet!"
+            if readerinfo[0] == False:
+                return "You don't have the right to borrow book!"
+            if readerinfo[1] == 10:
+                return "You hava already borrower 10 books yet!"
             else:
-                # 借书出错回滚？
                 import time
                 import datetime
                 Record_id = time.ctime()
@@ -175,7 +185,7 @@ class lib_manager:
                 exec(command)
                 self.reader_borrow_or_return_a_book(Reader_id, Book_id, True)
         else:
-            print "No Books remained!"
+            return  "No Books remained!"
 
     def return_book(self, Reader_id, Book_id):
         """
@@ -267,10 +277,11 @@ the main function for testing
     mg = lib_manager(con)
     #print "----------------------------"
     #print "test add_Reader()"
-    #f = open('Reader_v1.0','r')
+    #f = open('Reader_v1.1','r')
     #lines = f.readlines()
     #for i in lines:
-    #    temp = i.split() 
+    #    temp = i.split('##') 
+    #    temp[len(temp) - 1] = temp[len(temp) - 1].rstrip()
     #    print temp
     #    mg.add_Reader(temp)
 
@@ -297,11 +308,11 @@ the main function for testing
     #    print temp
     #    mg.add_Book(temp)
 
-    print "--------------------------"
-    print "test lookup_Book_by_ID()"
-    bid = '5555'
-    msg = mg.lookup_Book_by_ID(bid)
-    print msg
+    #print "--------------------------"
+    #print "test lookup_Book_by_ID()"
+    #bid = '5555'
+    #msg = mg.lookup_Book_by_ID(bid)
+    #print msg
     
     #print "-------------------------"
     #print "test del_Book()"
@@ -315,6 +326,11 @@ the main function for testing
     #print "-----------------------"
     #print "test return_book()"
     #mg.return_book(20090002,2)
+
+    #print "-----------------------"
+    #print "test update_Book()"
+    Book_info = ['1', 'stonestyle', 'stone', 'stone inc', 'IT', '10', '0', 'no remark!']
+    mg.update_Book(Book_info)
 
 if __name__ == "__main__":
     main()
