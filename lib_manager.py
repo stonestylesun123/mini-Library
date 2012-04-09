@@ -180,7 +180,9 @@ class lib_manager:
         if readerinfo[0] == False:
             return [0,"You don't have the right to borrow book!"]
         if readerinfo[1] == 10:
-            return [0,"You hava already borrower 10 books yet!"]
+            return [0,"You hava already borrowed 10 books yet!"]
+        if self.is_record_existed(Reader_id, Book_id):
+            return [0,"You hava already borrowed that book!"]
         else:
             import time
             import datetime
