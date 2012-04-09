@@ -8,7 +8,7 @@ subUI = ['book_look_up_UI', 'reader_look_up_UI', 'book_manager_UI', 'reader_mana
 
 class submanagerUI(wx.Panel):
     def __init__(self, parent, id, choice, connection):
-        wx.Panel.__init__(self, parent, id=-1, size=(850,400))
+        wx.Panel.__init__(self, parent, id=-1, size=(845,400))
         self.setchoice(choice)
 	self.connection = connection
         self.lib_manager = lib_manager(self.connection)
@@ -178,7 +178,7 @@ class submanagerUI(wx.Panel):
         line = wx.StaticLine(self)
         vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
         sizer2 = wx.GridBagSizer(5,4)
-        u2_st2 = wx.StaticText(self, -1, label="查询结果")
+        u2_st2 = wx.StaticText(self, -1, label="查询结果：YES，yes，1表示有权限借书，其他表示没有权限")
         u2_st2.SetForegroundColour('#3014D4')
         u2_st3 = wx.StaticText(self, -1, label="id")
         self.u2_tc3 = wx.TextCtrl(self, -1, size=(180, 26))
@@ -201,7 +201,7 @@ class submanagerUI(wx.Panel):
         u2_st9 = wx.StaticText(self, -1, label="remark")
         self.u2_tc9 = wx.TextCtrl(self, -1, size=(240, 26))
         self.u2_tc9.Disable()
-        sizer2.Add(u2_st2, pos=(0,0), flag=wx.ALL, border=5)
+        sizer2.Add(u2_st2, pos=(0,0), span=(1,2), flag=wx.ALL|wx.ALIGN_LEFT, border=5)
         sizer2.Add(u2_st3, pos=(1,0), flag=wx.ALL, border=5)
         sizer2.Add(self.u2_tc3, pos=(1,1), flag=wx.ALL, border=5)
         sizer2.Add(u2_st4, pos=(1,2), flag=wx.ALL, border=5)
@@ -252,11 +252,15 @@ class submanagerUI(wx.Panel):
                             command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), result[i])
                             exec(command)
                         else:
-                            command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), (result[i] and "YES" or "NO"))
+			    if result[i] == '1':
+				result[i] = 'YES'
+			    else:
+				result[i] = 'NO'
+                            command = """self.u2_tc%d.SetValue("%s")""" % ((i + 3), result[i])
                             exec(command)
-                            self.u2_lookup = True
-                            self.u2_changed = False
-                            self.u2_handon = False
+                    self.u2_lookup = True
+                    self.u2_changed = False
+                    self.u2_handon = False
         if e.GetId() == 302:
             if not self.u2_lookup:
                 wx.MessageBox('请先查询再修改', 'Error', wx.OK | wx.ICON_ERROR)
@@ -277,7 +281,10 @@ class submanagerUI(wx.Panel):
                     command = "tmp = self.u2_tc%d.GetValue()" % (i + 3)
                     exec(command)
                     if i == 5:
-                        tmp = (tmp == 'YES' and 1 or 0)
+			if tmp == 'YES' or tmp == 'yes' or tmp == '1':
+                            tmp = 1
+			else:
+			    tmp = 0
                     temp.append(tmp)
 
                 self.lib_manager.update_Reader(temp)
@@ -436,8 +443,158 @@ class submanagerUI(wx.Panel):
 		    return 
 		
     def reader_manager_UI(self):
-        pass
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        sizer = wx.GridBagSizer(1,7)
+        u4_st0 = wx.StaticText(self, -1, label="读者查询")
+        u4_st0.SetForegroundColour('#3014D4')
+        u4_st1 = wx.StaticText(self, -1, label="请输入读者ID")
+        self.u4_tc1 = wx.TextCtrl(self, -1, size=(120, 26))
+        u4_bt1 = wx.Button(self, 501, label='查询')
+        u4_new_bt1 = wx.Button(self, 502, label='删除读者')
+        u4_new_bt2 = wx.Button(self, 503, label='编辑读者信息')
+	u4_new_bt3 = wx.Button(self, 504, label='增加读者')
+        sizer.Add(u4_st0, pos=(0,0), flag=wx.ALL, border=16)
+        sizer.Add(u4_st1, pos=(0,1), flag=wx.ALL, border=16)
+        sizer.Add(self.u4_tc1, pos=(0,2), flag=wx.ALL, border=13)
+        sizer.Add(u4_bt1, pos=(0,3), flag=wx.ALL, border=10)
+	sizer.Add(u4_new_bt1, pos=(0,4), flag=wx.ALL, border=10)
+        sizer.Add(u4_new_bt2, pos=(0,5), flag=wx.ALL, border=10)
+        sizer.Add(u4_new_bt3, pos=(0,6), flag=wx.ALL, border=10)
+        vbox.Add(sizer)
+        line = wx.StaticLine(self)
+        vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
+        sizer2 = wx.GridBagSizer(5,4)
+        u4_st2 = wx.StaticText(self, -1, label="查询结果：YES，yes，1表示有权限借书，其他表示没有权限")
+        u4_st2.SetForegroundColour('#3014D4')
+        u4_st3 = wx.StaticText(self, -1, label="id")
+        self.u4_tc3 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc3.Disable()
+        u4_st4 = wx.StaticText(self, -1, label="name")
+        self.u4_tc4 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc4.Disable()
+        u4_st5 = wx.StaticText(self, -1, label="gender")
+        self.u4_tc5 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc5.Disable()
+        u4_st6 = wx.StaticText(self, -1, label="email")
+        self.u4_tc6 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc6.Disable()
+        u4_st7 = wx.StaticText(self, -1, label="lended book amount")
+        self.u4_tc7 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc7.Disable()
+        u4_st8 = wx.StaticText(self, -1, label="get right to borrow")
+        self.u4_tc8 = wx.TextCtrl(self, -1, size=(180, 26))
+        self.u4_tc8.Disable()
+        u4_st9 = wx.StaticText(self, -1, label="remark")
+        self.u4_tc9 = wx.TextCtrl(self, -1, size=(240, 26))
+        self.u4_tc9.Disable()
+        sizer2.Add(u4_st2, pos=(0,0), span=(1,2), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st3, pos=(1,0), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc3, pos=(1,1), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st4, pos=(1,2), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc4, pos=(1,3), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st5, pos=(2,0), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc5, pos=(2,1), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st6, pos=(2,2), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc6, pos=(2,3), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st7, pos=(3,0), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc7, pos=(3,1), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st8, pos=(3,2), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc8, pos=(3,3), flag=wx.ALL, border=5)
+        sizer2.Add(u4_st9, pos=(4,0), flag=wx.ALL, border=5)
+        sizer2.Add(self.u4_tc9, pos=(4,1), flag=wx.ALL, border=5)
+        vbox.Add(sizer2, proportion=0, flag=wx.LEFT|wx.EXPAND, border=15)
+        self.u4_lookup = False
+        self.u4_edit = False
+        self.Bind(wx.EVT_BUTTON, self.readermanage, u4_bt1)
+        self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt1)
+        self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt2)
+	self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt3)
 
+        return vbox
+
+    def readermanage(self, e):
+	if e.GetId() == 501:
+	    string = self.u4_tc1.GetValue()
+	    if string == "":
+                wx.MessageBox('Invalid input!', 'Error', wx.OK | wx.ICON_ERROR)
+            else:
+		for i in range(7):
+		    command = "self.u4_tc%d.Disable()" % (i + 3)
+		    exec(command)
+                result = self.lib_manager.lookup_Reader(string)
+                if result == None or result == False:
+                    wx.MessageBox('Does not exist', 'Error', wx.OK | wx.ICON_ERROR)
+                else:
+                    print result
+                    for i in range(len(result)):
+                        if not i == 5:
+                            command = """self.u4_tc%d.SetValue("%s")""" % ((i + 3), result[i])
+                        else:
+			    if result[i] == '1':
+				result[i] = 'YSE'
+			    else:
+				result[i] = 'NO'
+                            command = """self.u4_tc%d.SetValue("%s")""" % ((i + 3), result[i])
+                        exec(command)
+		    self.u4_lookup = True
+	if e.GetId() == 502:
+	    if not self.u4_lookup:
+		wx.MessageBox('Select a reader first!', 'Error', wx.OK | wx.ICON_ERROR)
+	    else:
+                dial = wx.MessageDialog(None, 'Are you sure to delete?', 'Question', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+                ret = dial.ShowModal()
+		if ret == wx.ID_YES:
+		    string = self.u4_tc3.GetValue()
+		    self.lib_manager.del_Reader(string)
+		    self.u4_lookup = False
+		    for i in range(7):
+                        command = """self.u4_tc%d.SetValue("")""" % (i + 3)
+                        exec(command)
+		else:
+		    return
+	if e.GetId() == 503:
+	    for i in range(7):
+		command = """self.u4_tc%d.SetValue("")""" % (i + 3)
+		exec(command)
+		command = "self.u4_tc%d.Enable()" % (i + 3)
+		exec(command)
+	    self.u4_lookup = False
+	    self.u4_edit = True
+	if e.GetId() == 504:
+	    if not self.u4_edit:
+		wx.MessageBox('Editing first!', 'Error', wx.OK | wx.ICON_ERROR)
+	    else:
+                dial = wx.MessageDialog(None, 'Are you sure to add a reader?', 'Question', wx.YES_NO | wx.NO_DEFAULT | wx.ICON_QUESTION)
+                ret = dial.ShowModal()
+		if ret == wx.ID_YES:
+                    temp = []
+                    for i in range(7):
+                    	command = "tmp = self.u4_tc%d.GetValue()" % (i + 3)
+                    	exec(command)
+                    	temp.append(tmp)
+		    if temp[5] == "YSE" or temp[5] == "yes" or temp[5] == "1":
+			temp[5] = "1"
+		    else:
+			temp[5] = "0"
+		    print "temp[5]:",temp[5]
+                    if temp[0] == "":
+                        wx.MessageBox('Invalid input', 'Error', wx.OK | wx.ICON_ERROR)
+			return
+		    result = self.lib_manager.lookup_Reader(temp[0])
+                    if not result == False:
+                        wx.MessageBox('Invalid input or duplicate ID', 'Error', wx.OK | wx.ICON_ERROR)
+			return
+		    print temp
+		    self.lib_manager.add_Reader(temp)
+		    self.u4_edit = False
+		    for i in range(7):
+                        command = """self.u4_tc%d.SetValue("")""" % (i + 3)
+                        exec(command)
+			command = "self.u4_tc%d.Disable()" % (i + 3)
+			exec(command)     
+		else:
+		    return
     def book_borrow_UI(self):
         pass
 

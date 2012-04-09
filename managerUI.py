@@ -10,7 +10,7 @@ class managerUI(wx.Frame):
 
         self.connection=connection
         self.InitUI()
-        self.SetSize((850,450))
+        self.SetSize((845,450))
         self.Centre()
         self.Show(True)
         self.SetTitle(title)
@@ -64,7 +64,10 @@ class managerUI(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt5)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt6)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt7)
-        #self.Bind(wx.EVT_EXIT, self.quit)
+        self.Bind(wx.EVT_CLOSE, self.quit)
+
+    def quit(self, e):
+	self.Destroy()
 
     def ButtonEvent(self, e):
         panelid = e.GetId()
