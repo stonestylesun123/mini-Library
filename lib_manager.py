@@ -207,12 +207,9 @@ class lib_manager:
     @param Book_id:     the ID of the book to be returned
     @type Book_id:      string/integer
         """
-        if not self.is_record_existed(Reader_id, Book_id):
-            print "Not such record! Check your input!"
-        else:
-            command = u"""self.cur.execute("DELETE FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
-            exec(command)
-            self.reader_borrow_or_return_a_book(Reader_id, Book_id, False)
+        command = u"""self.cur.execute("DELETE FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
+        exec(command)
+        self.reader_borrow_or_return_a_book(Reader_id, Book_id, False)
 
     def is_record_existed(self, Reader_id, Book_id):
         command = u"""self.cur.execute("SELECT * FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
@@ -368,6 +365,10 @@ class lib_manager:
         nes = str(ne.year) + '-' + str(ne.month) + '-' + str(ne.day)
         self.set_Record_date(Reader_id, Book_id, date[0], nes)
         self.set_renewed(Reader_id, Book_id)
+	
+    def punishment(self, Reader_id, right, remark):
+	command = """self.cur.execute("UPDATE Reader SET get_right_to_borrow='%s', Reader_remarks='%s' WHERE Reader_id='%s'")""" % (right, remark, Reader_id)
+	exec(command)
 
 def main():
     """
@@ -375,7 +376,7 @@ the main function for testing
     """
     con = mdb.connect('localhost', 'library', '123456', 'librarydb', charset="utf8")
     mg = lib_manager(con)
-
+    #mg.punishment('20090001', '0', 'no')
     #print "---------------------------"
     #print "test renew_Record()"
     #mg.renew_Record(20090001,123)

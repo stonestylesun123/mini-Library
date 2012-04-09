@@ -744,4 +744,183 @@ class submanagerUI(wx.Panel):
             exec(command)
 
     def book_return_UI(self):
-        pass
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        sizer = wx.GridBagSizer(1,8)
+        u6_st = wx.StaticText(self, -1, label="还书处理")
+        u6_st.SetForegroundColour('#3014D4')
+        u6_st0 = wx.StaticText(self, -1, label="读者编号")
+        self.u6_tc0 = wx.TextCtrl(self, -1, size=(90, 26))
+        u6_st1 = wx.StaticText(self, -1, label="图书编号")
+        self.u6_tc1 = wx.TextCtrl(self, -1, size=(90, 26))
+        self.u6_bt = wx.Button(self, 700, label='借记查询')
+        u6_bt0 = wx.Button(self, 701, label='还书处理')
+        u6_bt1 = wx.Button(self, 702, label='清空信息')
+        sizer.Add(u6_st, pos=(0,0), flag=wx.ALL, border=16)
+        sizer.Add(u6_st0, pos=(0,1), flag=wx.TOP, border=16)
+        sizer.Add(self.u6_tc0, pos=(0,2), flag=wx.TOP, border=13)
+        sizer.Add(u6_st1, pos=(0,3), flag=wx.TOP|wx.LEFT, border=16)
+        sizer.Add(self.u6_tc1, pos=(0,4), flag=wx.ALL, border=13)
+        sizer.Add(self.u6_bt, pos=(0,5), flag=wx.ALL, border=11)
+        sizer.Add(u6_bt0, pos=(0,6), flag=wx.ALL, border=11)
+        sizer.Add(u6_bt1, pos=(0,7), flag=wx.ALL, border=11)
+        vbox.Add(sizer)
+        line = wx.StaticLine(self)
+        vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
+        self.Bind(wx.EVT_BUTTON, self.bookreturn, self.u6_bt)
+        self.Bind(wx.EVT_BUTTON, self.bookreturn, u6_bt0)
+        self.Bind(wx.EVT_BUTTON, self.bookreturn, u6_bt1)
+
+        sizer2 = wx.GridBagSizer(12,8)
+        u6_st2 = wx.StaticText(self, -1, label="已借图书")
+        u6_st2.SetForegroundColour('#3014D4')
+        self.u6_st2_1 = wx.StaticText(self, -1, label="借阅图书数：")
+        self.u6_st2_1.SetForegroundColour('#3014D4')
+        u6_st3 = wx.StaticText(self, -1, label="ID")
+        u6_st3.SetForegroundColour('#3014D4')
+        u6_st4 = wx.StaticText(self, -1, label="Name                                       ")
+        u6_st4.SetForegroundColour('#3014D4')
+        u6_st5 = wx.StaticText(self, -1, label="Author                            ")
+        u6_st5.SetForegroundColour('#3014D4')
+        u6_st6 = wx.StaticText(self, -1, label="Publisher    ")
+        u6_st6.SetForegroundColour('#3014D4')
+        u6_st7 = wx.StaticText(self, -1, label="Type                    ")
+        u6_st7.SetForegroundColour('#3014D4')
+        u6_st8 = wx.StaticText(self, -1, label="Starttime       ")
+        u6_st8.SetForegroundColour('#3014D4')
+        u6_st9 = wx.StaticText(self, -1, label="Endtime        ")
+        u6_st9.SetForegroundColour('#3014D4')
+        u6_st10 = wx.StaticText(self, -1, label="Renewed                ")
+        u6_st10.SetForegroundColour('#3014D4')
+        sizer2.Add(u6_st2, pos=(0,0), flag=wx.ALL, border=1)
+        sizer2.Add(self.u6_st2_1, pos=(0,2), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st3, pos=(1,0), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st4, pos=(1,1), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st5, pos=(1,2), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st6, pos=(1,3), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st7, pos=(1,4), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st8, pos=(1,5), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st9, pos=(1,6), flag=wx.ALL, border=1)
+        sizer2.Add(u6_st10,pos=(1,7), flag=wx.ALL, border=1)
+        for i in range(10):
+            for j in range(8):
+                command = "self.u6_%d_tc%d = wx.StaticText(self, -1, label='')" % (i,j)
+                exec(command)
+                command = "sizer2.Add(self.u6_%d_tc%d, pos=(%d,%d), flag=wx.ALL, border=1)" % (i,j,i+2,j)
+                exec(command)
+        vbox.Add(sizer2, proportion=0, flag=wx.ALL|wx.EXPAND, border=5)
+
+        return vbox
+
+    def bookreturn(self, e):
+        if e.GetId() == 700:
+            self.bookreturnrefresh()
+        if e.GetId() == 701:
+            reader_id = self.u6_tc0.GetValue()
+	    self.reader_id = reader_id
+            book_id = self.u6_tc1.GetValue()
+            if reader_id == "" or book_id == "":
+                wx.MessageBox("Invalud input!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+	    if not self.lib_manager.is_record_existed(reader_id, book_id):
+		wx.MessageBox("No such record!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+	    if self.lib_manager.check_whether_outdate(reader_id, book_id):
+                dial = wx.MessageDialog(None, 'RETURN OUT OF TIME！\nMAKE A PUNISHMEN?', 'Question', wx.YES_NO | wx.YES_DEFAULT | wx.ICON_WARNING)
+                ret = dial.ShowModal()
+		if ret == wx.ID_YES:
+		    punish = PunishmentDialog(None, title='Punishment', lib_manager=self.lib_manager, reader_id=self.reader_id)
+        	    punish.ShowModal()
+        	    punish.Destroy()
+		    self.lib_manager.return_book(reader_id, book_id)
+		    wx.MessageBox("Return Book!", "Success!",wx.OK | wx.ICON_INFORMATION)
+		    self.bookreturnrefresh()
+		else:
+		    self.lib_manager.return_book(reader_id, book_id)
+		    wx.MessageBox("Return Success!", "Success!",wx.OK | wx.ICON_INFORMATION)
+		    self.bookreturnrefresh()
+	    else:
+		self.lib_manager.return_book(reader_id, book_id)
+		wx.MessageBox("Return Success!", "Success!",wx.OK | wx.ICON_INFORMATION)
+		self.bookreturnrefresh()
+        if e.GetId() == 702:    
+            for i in range(2):
+                command = "self.u6_tc%d.SetValue('')" % i
+                exec(command)
+            for i in range(10):
+                for j in range(8):
+                    command = "self.u6_%d_tc%d.SetLabel('')" % (i,j)
+                    exec(command)
+            command = "self.u6_st2_1.SetLabel('借阅图书数:')"
+            exec(command)
+
+    def bookreturnrefresh(self):
+        reader_id = self.u6_tc0.GetValue()
+        if reader_id == "":
+            wx.MessageBox("Invalud input!", 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        else:
+            for i in range(10):
+                for j in range(8):
+                    command = "self.u6_%d_tc%d.SetLabel('')" % (i,j)
+                    exec(command)
+            command = "self.u6_st2_1.SetLabel('借阅图书数:')"
+            exec(command)
+            temp = self.lib_manager.lookup_Record(reader_id)
+            for i in range(len(temp)):
+                tempdate = self.lib_manager.lookup_Record_date(reader_id, temp[i][0])
+                if self.lib_manager.lookup_Record_renewed(reader_id, temp[i][0]):
+                    temprenewed = 'YES'
+                else:
+                    temprenewed = 'NO'
+                for j in range(8):
+                    if j <= 4:
+                        command = """self.u6_%d_tc%d.SetLabel("%s")""" % (i,j,temp[i][j])
+                    elif j == 7:
+                        command = """self.u6_%d_tc%d.SetLabel("%s")""" % (i,j,temprenewed)
+                    else:
+                        command = """self.u6_%d_tc%d.SetLabel("%s")""" % (i,j,tempdate[j-5])
+                    exec(command)
+            command = """self.u6_st2_1.SetLabel("借阅图书数:%s")""" % (str(len(temp)))
+            exec(command)
+
+class PunishmentDialog(wx.Dialog):
+    def __init__(self, parent, title, lib_manager, reader_id):
+	self.lib_manager = lib_manager
+	self.reader_id = reader_id
+        super(PunishmentDialog, self).__init__(parent=parent, title=title, size=(250, 200))
+	panel = wx.Panel(self)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+	st0_0 = wx.StaticText(panel, -1, label="处罚：")
+	st0_0.SetForegroundColour('#3014D4')
+	st0_1 = wx.StaticText(panel, -1, label="建议取消借书权限，在备注注明时间")
+	st0_1.SetForegroundColour('#3014D4')
+	st1_0 = wx.StaticText(panel, -1, label="读者信息:")
+	st1_1 = wx.StaticText(panel, -1, label="YES，yes，1表示有权限借书")
+	st1_2 = wx.StaticText(panel, -1, label="其他表示没有权限")
+	st2 = wx.StaticText(panel, -1, label="get right to borrow")
+	self.tc1 = wx.TextCtrl(panel, -1, size=(120, 26))
+	st3 = wx.StaticText(panel, -1, label="remark")
+	self.tc2 = wx.TextCtrl(panel, -1, size=(200, 26))
+	bt = wx.Button(panel, -1, label='提交')
+	vbox.Add(st0_0)
+	vbox.Add(st0_1)
+	vbox.Add(st1_0)
+	vbox.Add(st1_1)
+	vbox.Add(st1_2)
+	vbox.Add(st2)
+	vbox.Add(self.tc1)
+	vbox.Add(st3)
+	vbox.Add(self.tc2)
+	vbox.Add(bt)
+        panel.SetSizer(vbox)
+	bt.Bind(wx.EVT_BUTTON, self.Cancel)
+    def Cancel(self, e):
+	tc1 = self.tc1.GetValue()
+	tc2 = self.tc2.GetValue()
+	if tc1 == 'YES' or tc1 == 'yes' or tc1 == '1' or tc1 == 1:
+	    tc1 == '1'
+	else:
+	    tc1 == '0'
+	self.lib_manager.punishment(self.reader_id, tc1, tc2)
+	self.Destroy()

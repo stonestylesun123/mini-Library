@@ -32,6 +32,9 @@ class managerUI(wx.Frame):
         self.subUI4 = submanagerUI(self.downPanel, -1, 4, self.connection)
         self.subUI5 = submanagerUI(self.downPanel, -1, 5, self.connection)
         self.subUI6 = submanagerUI(self.downPanel, -1, 6, self.connection)
+	for i in range(1,7):
+            string = "self.subUI%d.Hide()" % i
+            exec(string)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
         sizer = wx.GridBagSizer(2, 7)
@@ -63,7 +66,7 @@ class managerUI(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt4)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt5)
         self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt6)
-        self.Bind(wx.EVT_BUTTON, self.ButtonEvent, bt7)
+        self.Bind(wx.EVT_BUTTON, self.quit, bt7)
         self.Bind(wx.EVT_CLOSE, self.quit)
 
     def quit(self, e):

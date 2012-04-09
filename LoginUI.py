@@ -78,6 +78,7 @@ class LoginUI(wx.Frame):
             self.managerUI = managerUI(connection=result, parent=None, id=-1)
 	    self.Show(False)
 	    self.managerUI.Show(True)
+	    self.Close()
         else:
             wx.MessageBox('Invalid ID or Wrong Password!', 'Error', wx.OK | wx.ICON_ERROR)
         
