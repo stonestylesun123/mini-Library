@@ -598,49 +598,67 @@ class submanagerUI(wx.Panel):
     def book_borrow_UI(self):
         vbox = wx.BoxSizer(wx.VERTICAL)
         hbox = wx.BoxSizer(wx.HORIZONTAL)
-        sizer = wx.GridBagSizer(1,7)
+        sizer = wx.GridBagSizer(1,9)
         u5_st = wx.StaticText(self, -1, label="借书处理")
         u5_st.SetForegroundColour('#3014D4')
         u5_st0 = wx.StaticText(self, -1, label="读者编号")
-        self.u5_tc0 = wx.TextCtrl(self, -1, size=(120, 26))
+        self.u5_tc0 = wx.TextCtrl(self, -1, size=(90, 26))
         u5_st1 = wx.StaticText(self, -1, label="图书编号")
-        self.u5_tc1 = wx.TextCtrl(self, -1, size=(120, 26))
+        self.u5_tc1 = wx.TextCtrl(self, -1, size=(90, 26))
+        self.u5_bt = wx.Button(self, 600, label='借记查询')
         u5_bt0 = wx.Button(self, 601, label='借书处理')
-        u5_bt1 = wx.Button(self, 602, label='清空信息')
-        sizer.Add(u5_st, pos=(0,0), flag=wx.ALL, border=16)
-        sizer.Add(u5_st0, pos=(0,1), flag=wx.ALL, border=16)
-        sizer.Add(self.u5_tc0, pos=(0,2), flag=wx.ALL, border=13)
-        sizer.Add(u5_st1, pos=(0,3), flag=wx.ALL, border=16)
-        sizer.Add(self.u5_tc1, pos=(0,4), flag=wx.ALL, border=13)
-        sizer.Add(u5_bt0, pos=(0,5), flag=wx.ALL, border=10)
-        sizer.Add(u5_bt1, pos=(0,6), flag=wx.ALL, border=10)
+        u5_bt0_1 = wx.Button(self, 602, label='续借')
+        u5_bt1 = wx.Button(self, 603, label='清空信息')
+        sizer.Add(u5_st, pos=(0,0), flag=wx.ALL, border=13)
+        sizer.Add(u5_st0, pos=(0,1), flag=wx.TOP, border=13)
+        sizer.Add(self.u5_tc0, pos=(0,2), flag=wx.TOP, border=10)
+        sizer.Add(u5_st1, pos=(0,3), flag=wx.TOP|wx.LEFT, border=13)
+        sizer.Add(self.u5_tc1, pos=(0,4), flag=wx.TOP, border=10)
+        sizer.Add(self.u5_bt, pos=(0,5), flag=wx.TOP|wx.LEFT, border=8)
+        sizer.Add(u5_bt0, pos=(0,6), flag=wx.TOP, border=8)
+        sizer.Add(u5_bt0_1, pos=(0,7), flag=wx.TOP, border=8)
+        sizer.Add(u5_bt1, pos=(0,8), flag=wx.TOP, border=8)
         vbox.Add(sizer)
         line = wx.StaticLine(self)
         vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
+        self.Bind(wx.EVT_BUTTON, self.bookborrow, self.u5_bt)
         self.Bind(wx.EVT_BUTTON, self.bookborrow, u5_bt0)
+        self.Bind(wx.EVT_BUTTON, self.bookborrow, u5_bt0_1)
         self.Bind(wx.EVT_BUTTON, self.bookborrow, u5_bt1)
 
-        sizer2 = wx.GridBagSizer(12,5)
-        u5_st2 = wx.StaticText(self, -1, label="读者已借阅图书")
+        sizer2 = wx.GridBagSizer(12,8)
+        u5_st2 = wx.StaticText(self, -1, label="已借图书")
         u5_st2.SetForegroundColour('#3014D4')
+        self.u5_st2_1 = wx.StaticText(self, -1, label="借阅图书数：")
+        self.u5_st2_1.SetForegroundColour('#3014D4')
         u5_st3 = wx.StaticText(self, -1, label="ID")
         u5_st3.SetForegroundColour('#3014D4')
-        u5_st4 = wx.StaticText(self, -1, label="Name                                    ")
+        u5_st4 = wx.StaticText(self, -1, label="Name                                       ")
         u5_st4.SetForegroundColour('#3014D4')
-        u5_st5 = wx.StaticText(self, -1, label="Author                                  ")
+        u5_st5 = wx.StaticText(self, -1, label="Author                            ")
         u5_st5.SetForegroundColour('#3014D4')
-        u5_st6 = wx.StaticText(self, -1, label="Publisher                               ")
+        u5_st6 = wx.StaticText(self, -1, label="Publisher    ")
         u5_st6.SetForegroundColour('#3014D4')
-        u5_st7 = wx.StaticText(self, -1, label="Type                                    ")
+        u5_st7 = wx.StaticText(self, -1, label="Type                    ")
         u5_st7.SetForegroundColour('#3014D4')
-        sizer2.Add(u5_st2, pos=(0,0), span=(1,1), flag=wx.ALL, border=1)
+        u5_st8 = wx.StaticText(self, -1, label="Starttime       ")
+        u5_st8.SetForegroundColour('#3014D4')
+        u5_st9 = wx.StaticText(self, -1, label="Endtime        ")
+        u5_st9.SetForegroundColour('#3014D4')
+        u5_st10 = wx.StaticText(self, -1, label="Renewed                ")
+        u5_st10.SetForegroundColour('#3014D4')
+        sizer2.Add(u5_st2, pos=(0,0), flag=wx.ALL, border=1)
+        sizer2.Add(self.u5_st2_1, pos=(0,2), flag=wx.ALL, border=1)
         sizer2.Add(u5_st3, pos=(1,0), flag=wx.ALL, border=1)
         sizer2.Add(u5_st4, pos=(1,1), flag=wx.ALL, border=1)
         sizer2.Add(u5_st5, pos=(1,2), flag=wx.ALL, border=1)
         sizer2.Add(u5_st6, pos=(1,3), flag=wx.ALL, border=1)
         sizer2.Add(u5_st7, pos=(1,4), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st8, pos=(1,5), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st9, pos=(1,6), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st10,pos=(1,7), flag=wx.ALL, border=1)
         for i in range(10):
-            for j in range(5):
+            for j in range(8):
                 command = "self.u5_%d_tc%d = wx.StaticText(self, -1, label='')" % (i,j)
                 exec(command)
                 command = "sizer2.Add(self.u5_%d_tc%d, pos=(%d,%d), flag=wx.ALL, border=1)" % (i,j,i+2,j)
@@ -649,7 +667,39 @@ class submanagerUI(wx.Panel):
 
         return vbox
 
+    def bookborrowrefresh(self):
+        reader_id = self.u5_tc0.GetValue()
+        if reader_id == "":
+            wx.MessageBox("Invalud input!", 'Error', wx.OK | wx.ICON_ERROR)
+            return
+        else:
+            for i in range(10):
+                for j in range(8):
+                    command = "self.u5_%d_tc%d.SetLabel('')" % (i,j)
+                    exec(command)
+            command = "self.u5_st2_1.SetLabel('借阅图书数:')"
+            exec(command)
+            temp = self.lib_manager.lookup_Record(reader_id)
+            for i in range(len(temp)):
+                tempdate = self.lib_manager.lookup_Record_date(reader_id, temp[i][0])
+                if self.lib_manager.lookup_Record_renewed(reader_id, temp[i][0]):
+                    temprenewed = 'YES'
+                else:
+                    temprenewed = 'NO'
+                for j in range(8):
+                    if j <= 4:
+                        command = """self.u5_%d_tc%d.SetLabel("%s")""" % (i,j,temp[i][j])
+                    elif j == 7:
+                        command = """self.u5_%d_tc%d.SetLabel("%s")""" % (i,j,temprenewed)
+                    else:
+                        command = """self.u5_%d_tc%d.SetLabel("%s")""" % (i,j,tempdate[j-5])
+                    exec(command)
+            command = """self.u5_st2_1.SetLabel("借阅图书数:%s")""" % (str(len(temp)))
+            exec(command)
+
     def bookborrow(self, e):
+        if e.GetId() == 600:
+            self.bookborrowrefresh()
         if e.GetId() == 601:
             reader_id = self.u5_tc0.GetValue()
             book_id = self.u5_tc1.GetValue()
@@ -662,19 +712,36 @@ class submanagerUI(wx.Panel):
                 return
             else:
                 wx.MessageBox("Borrow Success!", "Success!",wx.OK | wx.ICON_INFORMATION)
-                temp = self.lib_manager.lookup_Record(reader_id)
-                for i in range(len(temp)):
-                    for j in range(5):
-                        command = """self.u5_%d_tc%d.SetLabel("%s")""" % (i,j,temp[i][j])
-                        exec(command)
-        if e.GetId() == 602:    
+                self.bookborrowrefresh()
+        if e.GetId() == 602:
+            reader_id = self.u5_tc0.GetValue()
+            book_id = self.u5_tc1.GetValue()
+            if reader_id == "" or book_id == "":
+                wx.MessageBox("Invalud input!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            if not self.lib_manager.is_record_existed(reader_id, book_id):
+                wx.MessageBox("No such record!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            if self.lib_manager.check_whether_outdate(reader_id, book_id):
+                wx.MessageBox("Already outdate!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            if self.lib_manager.lookup_Record_renewed(reader_id, book_id):
+                wx.MessageBox("Already renewed!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            else:
+                self.lib_manager.renew_Record(reader_id, book_id)
+                self.bookborrowrefresh()
+
+        if e.GetId() == 603:    
             for i in range(2):
                 command = "self.u5_tc%d.SetValue('')" % i
                 exec(command)
             for i in range(10):
-                for j in range(5):
+                for j in range(8):
                     command = "self.u5_%d_tc%d.SetLabel('')" % (i,j)
                     exec(command)
+            command = "self.u5_st2_1.SetLabel('借阅图书数:')"
+            exec(command)
 
     def book_return_UI(self):
         pass

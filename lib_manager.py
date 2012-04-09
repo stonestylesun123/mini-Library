@@ -205,15 +205,21 @@ class lib_manager:
     @param Book_id:     the ID of the book to be returned
     @type Book_id:      string/integer
         """
-        command = u"""self.cur.execute("SELECT * FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
-        exec(command)
-        data = self.cur.fetchone()
-        if data == "":
+        if not self.is_record_existed(Reader_id, Book_id):
             print "Not such record! Check your input!"
         else:
             command = u"""self.cur.execute("DELETE FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
             exec(command)
             self.reader_borrow_or_return_a_book(Reader_id, Book_id, False)
+
+    def is_record_existed(self, Reader_id, Book_id):
+        command = u"""self.cur.execute("SELECT * FROM Record WHERE R_id = %s AND B_id = %s")""" % (Reader_id, Book_id)
+        exec(command)
+        data = self.cur.fetchone()
+        if data == None:
+            return False
+        else:
+            return True
 
     def reader_borrow_or_return_a_book(self, Reader_id, Book_id, status):
         """
@@ -295,8 +301,71 @@ class lib_manager:
         temp = []
         for i in books:
             temp.append(self.lookup_Book_by_ID(str(i)))
-        print temp
+        #print temp
         return temp
+
+    def set_right_to_borrow(self, Reader_id, status):
+        if status == 'YES' or status == 'yes' or status == '1' or status == 1 or status == True:
+            status == 1
+        else:
+            status == 0
+        command = """self.cur.execute("UPDATE Reader SET get_right_to_borrow='%s' WHERE Reader_id='%s'")""" % (status, Reader_id)
+        exec(command)
+
+    def check_whether_outdate(self, Reader_id, Book_id):
+        command = """self.cur.execute("SELECT enddate FROM Record WHERE R_id='%s' AND B_id='%s'")""" % (Reader_id, Book_id)
+        exec(command)
+        data = self.cur.fetchone()
+        endtime = data[0]
+        import datetime
+        today = datetime.datetime.now()
+        if endtime.year < today.year:
+            return True
+        elif endtime.year > today.year:
+            return False
+        elif endtime.month > today.month:
+            return False
+        elif endtime.month < today.month:
+            return True
+        elif endtime.day < today.day:
+            return True
+        else:
+            return False
+
+    def lookup_Record_date(self, Reader_id, Book_id):
+        command = """self.cur.execute("SELECT startdate,enddate FROM Record WHERE R_id='%s' AND B_id='%s'")""" % (Reader_id, Book_id)
+        exec(command)
+        data = self.cur.fetchone()
+        st = '-'.join([str(data[0].year),str(data[0].month),str(data[0].day)])
+        et = '-'.join([str(data[1].year),str(data[1].month),str(data[1].day)])
+        return [st, et]
+
+    def lookup_Record_renewed(self, Reader_id, Book_id):
+        command = """self.cur.execute("SELECT is_renewed FROM Record WHERE R_id='%s' AND B_id='%s'")""" % (Reader_id, Book_id)
+        exec(command)
+        data = self.cur.fetchone()
+        if data[0]:
+            return True
+        else:
+            return False
+
+    def set_renewed(self, Reader_id, Book_id):
+        command = """self.cur.execute("UPDATE Record SET is_renewed='1' WHERE R_id='%s' AND B_id='%s'")""" % (Reader_id, Book_id)
+        exec(command)
+
+    def set_Record_date(self, Reader_id, Book_id, startdate, enddate):
+        command = """self.cur.execute("UPDATE Record SET startdate='%s',enddate='%s' WHERE R_id='%s' AND B_id='%s'")""" % (startdate, enddate, Reader_id, Book_id)
+        exec(command)
+
+    def renew_Record(self, Reader_id, Book_id):
+        date = self.lookup_Record_date(Reader_id, Book_id)
+        import datetime as dt
+        temp = date[1].split('-')
+        end = dt.date(int(temp[0]), int(temp[1]), int(temp[2]))
+        ne = end + dt.timedelta(days=15)
+        nes = str(ne.year) + '-' + str(ne.month) + '-' + str(ne.day)
+        self.set_Record_date(Reader_id, Book_id, date[0], nes)
+        self.set_renewed(Reader_id, Book_id)
 
 def main():
     """
@@ -304,6 +373,27 @@ the main function for testing
     """
     con = mdb.connect('localhost', 'library', '123456', 'librarydb', charset="utf8")
     mg = lib_manager(con)
+
+    #print "---------------------------"
+    #print "test renew_Record()"
+    #mg.renew_Record(20090001,123)
+
+    #print "---------------------------"
+    #print "test set_Record_date()"
+    #mg.set_Record_date('20090001', '100', '2012-01-01', '2012-02-01')
+
+    #print "----------------------------"
+    #print "test lookup_Record_date()"
+    #mg.lookup_Record_date(20090001,123)
+
+    #print "---------------------------"
+    #print "test set_renewed()"
+    #mg.set_renewed(20090001, 124)
+
+    #print "----------------------------"
+    #print "test lookup_Record_renewed()"
+    #print mg.lookup_Record_renewed(20090001,123)
+
     #print "----------------------------"
     #print "test add_Reader()"
     #f = open('Reader_v1.1','r')
@@ -354,7 +444,7 @@ the main function for testing
     
     #print "-----------------------"
     #print "test return_book()"
-    #mg.return_book(20090002,2)
+    #mg.return_book(20090001,999)
 
     #print "-----------------------"
     #print "test update_Book()"
@@ -372,7 +462,18 @@ the main function for testing
 
     #print "---------------------"
     #print "test lookup_Record()"
-    mg.lookup_Record('20090009')
+    #mg.lookup_Record('20090009')
 
+    #print "--------------------"
+    #print "test set_right_to_borrow()"
+    #mg.set_right_to_borrow('20090022', 1)
+
+    #print "-------------------"
+    #print "test check_whether_outdate()"
+    #print mg.check_whether_outdate('20090001', '100')
+
+    #print "-------------------"
+    #print "test is_record_existed()"
+    #print mg.is_record_existed('20090001','1')
 if __name__ == "__main__":
     main()
