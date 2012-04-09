@@ -172,30 +172,30 @@ class lib_manager:
         #print command
         exec(command)
         bookinfo = self.cur.fetchall()
-        if bookinfo[0][0] - bookinfo[0][1] > 0:
-            command = u"""self.cur.execute("SELECT get_right_to_borrow,lended_book_count FROM Reader WHERE Reader_id = %s")""" % Reader_id
-            exec(command)
-            readerinfo = self.cur.fetchone()
-            if readerinfo[0] == False:
-                return "You don't have the right to borrow book!"
-            if readerinfo[1] == 10:
-                return "You hava already borrower 10 books yet!"
-            else:
-                import time
-                import datetime
-                Record_id = time.ctime()
-                R_id = str(Reader_id)
-                B_id = str(Book_id)
-                startdate = datetime.datetime.now()
-                enddate = startdate + datetime.timedelta(days = 30)
-                startdate = str(startdate.year) + '-' + str(startdate.month) + '-' + str(startdate.day)
-                enddate = str(enddate.year) + '-' + str(enddate.month) + '-' +str(enddate.day)
-                is_renewed = 'False'
-                command = u"""self.cur.execute("INSERT INTO Record VALUES('%s', '%s', '%s', '%s', '%s', '%s')")""" % (Record_id, R_id, B_id, startdate, enddate, is_renewed)
-                exec(command)
-                self.reader_borrow_or_return_a_book(Reader_id, Book_id, True)
+        if bookinfo[0][0] - bookinfo[0][1] <= 0:
+            return [0,"No books remained!"]
+        command = u"""self.cur.execute("SELECT get_right_to_borrow,lended_book_count FROM Reader WHERE Reader_id = %s")""" % Reader_id
+        exec(command)
+        readerinfo = self.cur.fetchone()
+        if readerinfo[0] == False:
+            return [0,"You don't have the right to borrow book!"]
+        if readerinfo[1] == 10:
+            return [0,"You hava already borrower 10 books yet!"]
         else:
-            return  "No Books remained!"
+            import time
+            import datetime
+            Record_id = time.ctime()
+            R_id = str(Reader_id)
+            B_id = str(Book_id)
+            startdate = datetime.datetime.now()
+            enddate = startdate + datetime.timedelta(days = 30)
+            startdate = str(startdate.year) + '-' + str(startdate.month) + '-' + str(startdate.day)
+            enddate = str(enddate.year) + '-' + str(enddate.month) + '-' +str(enddate.day)
+            is_renewed = 'False'
+            command = u"""self.cur.execute("INSERT INTO Record VALUES('%s', '%s', '%s', '%s', '%s', '%s')")""" % (Record_id, R_id, B_id, startdate, enddate, is_renewed)
+            exec(command)
+            self.reader_borrow_or_return_a_book(Reader_id, Book_id, True)
+            return [1,'OK!']
 
     def return_book(self, Reader_id, Book_id):
         """
@@ -279,6 +279,25 @@ class lib_manager:
         alist = string.split("##")
         return alist
 
+    def get_right_to_borrow(self, Reader_id):
+        command = """self.cur.execute("SELECT get_right_to_borrow FROM Reader WHERE Reader_id='%s'")""" % Reader_id
+        exec(command)
+        data = self.cur.fetchone()
+        return data[0]
+
+    def lookup_Record(self, Reader_id):
+        command = """self.cur.execute("SELECT B_id FROM Record WHERE R_id='%s'")""" % Reader_id
+        exec(command)
+        data = self.cur.fetchall()
+        books = []
+        for i in range(len(data)):
+            books.append(data[i][0])
+        temp = []
+        for i in books:
+            temp.append(self.lookup_Book_by_ID(str(i)))
+        print temp
+        return temp
+
 def main():
     """
 the main function for testing
@@ -344,8 +363,16 @@ the main function for testing
 
     #print "-----------------------"
     #print "test update_Book()"
-    Reader_info = ['20090001', 'stone', 'M', 'stone@qq.com', '0', '1', 'no remark!']
-    mg.update_Reader(Reader_info)
+    #Reader_info = ['20090001', 'stone', 'M', 'stone@qq.com', '0', '1', 'no remark!']
+    #mg.update_Reader(Reader_info)
+
+    #print "----------------------"
+    #print "test get_right_to_borrow()"
+    #mg.get_right_to_borrow('20090001')
+
+    #print "---------------------"
+    #print "test lookup_Record()"
+    mg.lookup_Record('20090009')
 
 if __name__ == "__main__":
     main()

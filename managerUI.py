@@ -10,7 +10,7 @@ class managerUI(wx.Frame):
 
         self.connection=connection
         self.InitUI()
-        self.SetSize((845,450))
+        self.SetSize((845,550))
         self.Centre()
         self.Show(True)
         self.SetTitle(title)

@@ -8,7 +8,7 @@ subUI = ['book_look_up_UI', 'reader_look_up_UI', 'book_manager_UI', 'reader_mana
 
 class submanagerUI(wx.Panel):
     def __init__(self, parent, id, choice, connection):
-        wx.Panel.__init__(self, parent, id=-1, size=(845,400))
+        wx.Panel.__init__(self, parent, id=-1, size=(845,500))
         self.setchoice(choice)
 	self.connection = connection
         self.lib_manager = lib_manager(self.connection)
@@ -509,7 +509,7 @@ class submanagerUI(wx.Panel):
         self.Bind(wx.EVT_BUTTON, self.readermanage, u4_bt1)
         self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt1)
         self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt2)
-	self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt3)
+        self.Bind(wx.EVT_BUTTON, self.readermanage, u4_new_bt3)
 
         return vbox
 
@@ -596,7 +596,85 @@ class submanagerUI(wx.Panel):
 		else:
 		    return
     def book_borrow_UI(self):
-        pass
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        sizer = wx.GridBagSizer(1,7)
+        u5_st = wx.StaticText(self, -1, label="借书处理")
+        u5_st.SetForegroundColour('#3014D4')
+        u5_st0 = wx.StaticText(self, -1, label="读者编号")
+        self.u5_tc0 = wx.TextCtrl(self, -1, size=(120, 26))
+        u5_st1 = wx.StaticText(self, -1, label="图书编号")
+        self.u5_tc1 = wx.TextCtrl(self, -1, size=(120, 26))
+        u5_bt0 = wx.Button(self, 601, label='借书处理')
+        u5_bt1 = wx.Button(self, 602, label='清空信息')
+        sizer.Add(u5_st, pos=(0,0), flag=wx.ALL, border=16)
+        sizer.Add(u5_st0, pos=(0,1), flag=wx.ALL, border=16)
+        sizer.Add(self.u5_tc0, pos=(0,2), flag=wx.ALL, border=13)
+        sizer.Add(u5_st1, pos=(0,3), flag=wx.ALL, border=16)
+        sizer.Add(self.u5_tc1, pos=(0,4), flag=wx.ALL, border=13)
+        sizer.Add(u5_bt0, pos=(0,5), flag=wx.ALL, border=10)
+        sizer.Add(u5_bt1, pos=(0,6), flag=wx.ALL, border=10)
+        vbox.Add(sizer)
+        line = wx.StaticLine(self)
+        vbox.Add(line, proportion=0, flag=wx.ALL|wx.EXPAND, border=10)
+        self.Bind(wx.EVT_BUTTON, self.bookborrow, u5_bt0)
+        self.Bind(wx.EVT_BUTTON, self.bookborrow, u5_bt1)
+
+        sizer2 = wx.GridBagSizer(12,5)
+        u5_st2 = wx.StaticText(self, -1, label="读者已借阅图书")
+        u5_st2.SetForegroundColour('#3014D4')
+        u5_st3 = wx.StaticText(self, -1, label="ID")
+        u5_st3.SetForegroundColour('#3014D4')
+        u5_st4 = wx.StaticText(self, -1, label="Name                                    ")
+        u5_st4.SetForegroundColour('#3014D4')
+        u5_st5 = wx.StaticText(self, -1, label="Author                                  ")
+        u5_st5.SetForegroundColour('#3014D4')
+        u5_st6 = wx.StaticText(self, -1, label="Publisher                               ")
+        u5_st6.SetForegroundColour('#3014D4')
+        u5_st7 = wx.StaticText(self, -1, label="Type                                    ")
+        u5_st7.SetForegroundColour('#3014D4')
+        sizer2.Add(u5_st2, pos=(0,0), span=(1,1), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st3, pos=(1,0), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st4, pos=(1,1), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st5, pos=(1,2), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st6, pos=(1,3), flag=wx.ALL, border=1)
+        sizer2.Add(u5_st7, pos=(1,4), flag=wx.ALL, border=1)
+        for i in range(10):
+            for j in range(5):
+                command = "self.u5_%d_tc%d = wx.StaticText(self, -1, label='')" % (i,j)
+                exec(command)
+                command = "sizer2.Add(self.u5_%d_tc%d, pos=(%d,%d), flag=wx.ALL, border=1)" % (i,j,i+2,j)
+                exec(command)
+        vbox.Add(sizer2, proportion=0, flag=wx.ALL|wx.EXPAND, border=5)
+
+        return vbox
+
+    def bookborrow(self, e):
+        if e.GetId() == 601:
+            reader_id = self.u5_tc0.GetValue()
+            book_id = self.u5_tc1.GetValue()
+            if reader_id == "" or book_id == "":
+                wx.MessageBox("Invalud input!", 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            result = self.lib_manager.borrow_book(reader_id, book_id)
+            if not result[0]:
+                wx.MessageBox(result[1], 'Error', wx.OK | wx.ICON_ERROR)
+                return
+            else:
+                wx.MessageBox("Borrow Success!", "Success!",wx.OK | wx.ICON_INFORMATION)
+                temp = self.lib_manager.lookup_Record(reader_id)
+                for i in range(len(temp)):
+                    for j in range(5):
+                        command = """self.u5_%d_tc%d.SetLabel("%s")""" % (i,j,temp[i][j])
+                        exec(command)
+        if e.GetId() == 602:    
+            for i in range(2):
+                command = "self.u5_tc%d.SetValue('')" % i
+                exec(command)
+            for i in range(10):
+                for j in range(5):
+                    command = "self.u5_%d_tc%d.SetLabel('')" % (i,j)
+                    exec(command)
 
     def book_return_UI(self):
         pass
