@@ -35,9 +35,5 @@ CREATE TABLE IF NOT EXISTS Record(Record_id VARCHAR(24) NOT NULL PRIMARY KEY,
 CREATE TABLE IF NOT EXISTS Manager(Worker_id INT NOT NULL PRIMARY KEY,
 				   Worker_pass VARCHAR(12) NOT NULL
 				   );
-# 1001 managerone
 INSERT INTO Manager VALUES(1001, 'managerone')
 INSERT INTO Manager VALUES(1002, 'managertwo')
-
-# 显示表
-mysql> desc listname;
